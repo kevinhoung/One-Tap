@@ -83,9 +83,7 @@
       text-shadow: 0 2px 24px rgba(0, 0, 0, 0.25);
     }
 
-    .brand span {
-      color: #ffe08a;
-    }
+    .brand span { color: #ffe08a; }
 
     .tagline {
       margin: 0;
@@ -238,6 +236,135 @@
 
     .results.show { display: block; }
 
+    .viz-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (min-width: 720px) {
+      .viz-grid { grid-template-columns: 1.1fr 1fr; align-items: stretch; }
+    }
+
+    .roof-stage {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      min-height: 220px;
+      background:
+        linear-gradient(180deg, #7ec8d8 0%, #b8dce6 38%, #d4e8c2 70%, #c4a574 100%);
+      border: 1px solid var(--line);
+    }
+
+    .roof-stage .sun-orb {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff7c2, #f0a202 55%, #d97706);
+      box-shadow: 0 0 0 8px rgba(255, 224, 138, 0.25);
+      animation: sunFloat 5s ease-in-out infinite;
+    }
+
+    .roof-stage svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin-top: 1.5rem;
+    }
+
+    .roof-stage .panel-cell {
+      opacity: 0;
+      transform-origin: center;
+    }
+
+    .roof-stage.animate .panel-cell {
+      animation: panelPop 0.45s ease-out forwards;
+    }
+
+    .roof-caption {
+      position: absolute;
+      left: 0.75rem;
+      bottom: 0.65rem;
+      right: 0.75rem;
+      margin: 0;
+      padding: 0.45rem 0.65rem;
+      border-radius: 10px;
+      background: rgba(12, 31, 46, 0.55);
+      color: #fff;
+      font-size: 0.78rem;
+      line-height: 1.35;
+      backdrop-filter: blur(4px);
+    }
+
+    .gauges {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      justify-content: center;
+    }
+
+    .gauge {
+      padding: 0.85rem 0;
+    }
+
+    .gauge-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .gauge-head span {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--ink-soft);
+    }
+
+    .gauge-head strong {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .bar-track {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(12, 31, 46, 0.08);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .bar-fill.energy {
+      background: linear-gradient(90deg, var(--sky), #22c55e);
+    }
+
+    .bar-fill.sun {
+      background: linear-gradient(90deg, #fbbf24, var(--sun-deep));
+    }
+
+    .bar-fill.roof {
+      background: linear-gradient(90deg, #94a3b8, var(--sky-deep));
+    }
+
+    .gauge-note {
+      margin: 0.35rem 0 0;
+      font-size: 0.78rem;
+      color: var(--ink-soft);
+    }
+
     .metrics {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -281,6 +408,19 @@
       color: var(--ink-soft);
     }
 
+    .panel-note {
+      margin: 0.85rem 0 0;
+      padding: 0.75rem 0.9rem;
+      border-radius: 12px;
+      border-left: 3px solid var(--sun);
+      background: rgba(240, 162, 2, 0.1);
+      color: var(--ink-soft);
+      font-size: 0.88rem;
+      line-height: 1.45;
+    }
+
+    .panel-note strong { color: var(--ink); }
+
     .detail {
       margin-top: 1rem;
       padding: 1rem 1.1rem;
@@ -321,6 +461,165 @@
       color: var(--ok);
     }
 
+    .proposals {
+      display: none;
+      margin-top: 1.25rem;
+      animation: rise 0.6s ease-out 0.05s both;
+    }
+
+    .proposals.show { display: block; }
+
+    .proposals > .section-head {
+      margin-bottom: 0.85rem;
+    }
+
+    .demo-tag {
+      display: inline-block;
+      margin-bottom: 0.5rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--warn);
+    }
+
+    .tier-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    @media (min-width: 800px) {
+      .tier-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    .tier {
+      appearance: none;
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 1.1rem 1.15rem;
+      border-radius: 16px;
+      border: 1.5px solid var(--line);
+      background: rgba(255, 255, 255, 0.55);
+      color: inherit;
+      cursor: pointer;
+      transition: border-color 0.18s, background 0.18s, transform 0.12s, box-shadow 0.18s;
+      font: inherit;
+      font-weight: 400;
+    }
+
+    .tier:hover {
+      border-color: rgba(14, 116, 144, 0.45);
+      background: #fff;
+    }
+
+    .tier:focus-visible {
+      outline: 2px solid var(--sky);
+      outline-offset: 2px;
+    }
+
+    .tier.selected {
+      border-color: var(--sky);
+      background: #fff;
+      box-shadow: 0 10px 28px rgba(14, 116, 144, 0.14);
+    }
+
+    .tier.selected.luxe {
+      border-color: var(--sun-deep);
+      box-shadow: 0 10px 28px rgba(217, 119, 6, 0.16);
+    }
+
+    .tier-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .tier-name {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .tier-price-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--sky-deep);
+      white-space: nowrap;
+    }
+
+    .tier.luxe .tier-price-tag { color: var(--sun-deep); }
+
+    .tier-blurb {
+      margin: 0 0 0.85rem;
+      font-size: 0.86rem;
+      color: var(--ink-soft);
+      line-height: 1.4;
+    }
+
+    .tier-stats {
+      display: grid;
+      gap: 0.4rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tier-stats li {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.86rem;
+      padding: 0.25rem 0;
+      border-top: 1px solid rgba(12, 31, 46, 0.06);
+    }
+
+    .tier-stats span { color: var(--ink-soft); }
+    .tier-stats strong {
+      font-weight: 600;
+      color: var(--ink);
+      text-align: right;
+    }
+
+    .tier-select-hint {
+      margin: 0.75rem 0 0;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--sky-deep);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .tier.selected .tier-select-hint { opacity: 1; }
+
+    .assumptions {
+      margin-top: 1rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--line);
+      font-size: 0.82rem;
+      color: var(--ink-soft);
+      line-height: 1.5;
+    }
+
+    .assumptions summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .assumptions ul {
+      margin: 0.5rem 0 0;
+      padding-left: 1.1rem;
+    }
+
+    .assumptions li { margin: 0.25rem 0; }
+
     footer {
       margin-top: 1.5rem;
       color: var(--ink-soft);
@@ -344,6 +643,26 @@
     @keyframes pulse {
       0%, 100% { transform: scale(1); opacity: 0.7; }
       50% { transform: scale(1.08); opacity: 1; }
+    }
+
+    @keyframes sunFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+
+    @keyframes panelPop {
+      from { opacity: 0; transform: scale(0.6); }
+      to { opacity: 0.92; transform: scale(1); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .roof-stage .panel-cell { opacity: 0.92; }
+      .bar-fill { transition: none; }
     }
 
     .key-toggle {
@@ -444,11 +763,50 @@
         <h2 id="resultTitle">Solar potential</h2>
         <p class="hint" id="resultSubtitle">Sample building near Mountain View, CA</p>
 
+        <div class="viz-grid">
+          <div class="roof-stage" id="roofStage" aria-hidden="true">
+            <div class="sun-orb"></div>
+            <svg viewBox="0 0 320 200" role="img" aria-label="Illustrative roof with solar panels">
+              <polygon points="40,120 160,48 280,120 280,168 40,168" fill="#8b5a2b" opacity="0.85" />
+              <polygon points="40,120 160,48 280,120 260,128 160,68 60,128" fill="#a66b2b" />
+              <rect x="148" y="118" width="24" height="50" fill="#5c3d1e" opacity="0.55" />
+              <g id="roofPanels"></g>
+            </svg>
+            <p class="roof-caption" id="roofCaption">Illustrative panel layout — not a site survey</p>
+          </div>
+          <div class="gauges">
+            <div class="gauge">
+              <div class="gauge-head">
+                <span>Yearly energy</span>
+                <strong id="gEnergyLabel">—</strong>
+              </div>
+              <div class="bar-track"><div class="bar-fill energy" id="gEnergyBar"></div></div>
+              <p class="gauge-note">Relative to a strong residential roof (~50,000 kWh/yr)</p>
+            </div>
+            <div class="gauge">
+              <div class="gauge-head">
+                <span>Sunshine</span>
+                <strong id="gSunLabel">—</strong>
+              </div>
+              <div class="bar-track"><div class="bar-fill sun" id="gSunBar"></div></div>
+              <p class="gauge-note">Hours of peak sun / year (Google Solar)</p>
+            </div>
+            <div class="gauge">
+              <div class="gauge-head">
+                <span>Usable roof</span>
+                <strong id="gAreaLabel">—</strong>
+              </div>
+              <div class="bar-track"><div class="bar-fill roof" id="gAreaBar"></div></div>
+              <p class="gauge-note">Max array area vs a large home roof (~200 m²)</p>
+            </div>
+          </div>
+        </div>
+
         <div class="metrics">
           <div class="metric">
-            <p class="label">Max panels</p>
+            <p class="label">Google max panels</p>
             <p class="value" id="mPanels">—</p>
-            <span class="unit">panels on roof</span>
+            <span class="unit">theoretical packing</span>
           </div>
           <div class="metric">
             <p class="label">Yearly energy</p>
@@ -467,6 +825,12 @@
           </div>
         </div>
 
+        <p class="panel-note" id="panelNote">
+          Google’s <strong>max panel count</strong> is a theoretical packing for their model panel.
+          Installers usually propose fewer panels (aesthetic setbacks, fire paths, shading).
+          Demo proposals below use a more realistic recommended count while still showing Google’s max.
+        </p>
+
         <div class="detail">
           <h3>Building details</h3>
           <p><strong>Location:</strong> <span id="dLocation">—</span></p>
@@ -475,6 +839,33 @@
           <p><strong>Carbon offset factor:</strong> <span id="dCarbon">—</span></p>
           <p id="dNote"></p>
         </div>
+      </div>
+    </section>
+
+    <section id="proposals" class="proposals" aria-labelledby="proposals-heading">
+      <div class="panel">
+        <div class="section-head">
+          <span class="demo-tag">Illustrative demo pricing — not a real quote</span>
+          <h2 id="proposals-heading">Demo system proposals</h2>
+          <p class="hint" id="proposalHint">
+            Pick a tier to compare panel types and rough installed cost. Numbers are demo defaults scaled from this roof’s Google Solar yearly energy.
+          </p>
+        </div>
+
+        <div class="tier-grid" id="tierGrid" role="listbox" aria-label="Demo proposal tiers">
+          <!-- filled by JS -->
+        </div>
+
+        <details class="assumptions">
+          <summary>Demo assumptions</summary>
+          <ul>
+            <li>Recommended panel count ≈ 35% of Google’s max packing (capped below the max), to mirror typical contractor proposals.</li>
+            <li>Yearly production scales from Google’s max-array yearly energy by panel count × panel wattage vs Google’s model panel.</li>
+            <li>Installed price uses flat $/W demo rates (Basic $2.40/W, Premium $3.15/W, Luxe $3.90/W) — not market quotes.</li>
+            <li>Savings assume $0.16 / kWh retail electricity and a simple payback (price ÷ annual bill savings). No incentives, financing, or degradation modeled.</li>
+            <li>This is a product demo only — not engineering, design, or pricing advice.</li>
+          </ul>
+        </details>
       </div>
     </section>
 
@@ -513,7 +904,43 @@
         }
       };
 
+      /** Demo proposal knobs (illustrative only). */
+      const DEMO_KWH_RATE = 0.16;
+      const RECOMMENDED_FRACTION = 0.35;
+      const TIER_DEFS = [
+        {
+          id: "basic",
+          name: "Basic",
+          blurb: "Standard-efficiency panels, lower $/W, smaller array for a clean look.",
+          panelWatts: 370,
+          dollarsPerWatt: 2.4,
+          panelFactor: 0.75,
+          finish: "Blue poly look"
+        },
+        {
+          id: "premium",
+          name: "Premium",
+          blurb: "Higher-efficiency mono panels at a mid price — the usual homeowner pick.",
+          panelWatts: 400,
+          dollarsPerWatt: 3.15,
+          panelFactor: 1,
+          finish: "Black mono"
+        },
+        {
+          id: "luxe",
+          name: "Luxe",
+          className: "luxe",
+          blurb: "Premium high-watt panels plus a nicer all-black finish and denser layout.",
+          panelWatts: 430,
+          dollarsPerWatt: 3.9,
+          panelFactor: 1.1,
+          finish: "All-black + trim"
+        }
+      ];
+
       const STORAGE_KEY = "suntap_app_password";
+      let selectedTierId = "premium";
+      let lastPotential = null;
 
       const els = {
         address: document.getElementById("address"),
@@ -527,6 +954,7 @@
         heroDemoBtn: document.getElementById("heroDemoBtn"),
         status: document.getElementById("status"),
         results: document.getElementById("results"),
+        proposals: document.getElementById("proposals"),
         modeBadge: document.getElementById("modeBadge"),
         resultTitle: document.getElementById("resultTitle"),
         resultSubtitle: document.getElementById("resultSubtitle"),
@@ -538,7 +966,19 @@
         dQuality: document.getElementById("dQuality"),
         dPanel: document.getElementById("dPanel"),
         dCarbon: document.getElementById("dCarbon"),
-        dNote: document.getElementById("dNote")
+        dNote: document.getElementById("dNote"),
+        panelNote: document.getElementById("panelNote"),
+        roofStage: document.getElementById("roofStage"),
+        roofPanels: document.getElementById("roofPanels"),
+        roofCaption: document.getElementById("roofCaption"),
+        gEnergyLabel: document.getElementById("gEnergyLabel"),
+        gSunLabel: document.getElementById("gSunLabel"),
+        gAreaLabel: document.getElementById("gAreaLabel"),
+        gEnergyBar: document.getElementById("gEnergyBar"),
+        gSunBar: document.getElementById("gSunBar"),
+        gAreaBar: document.getElementById("gAreaBar"),
+        tierGrid: document.getElementById("tierGrid"),
+        proposalHint: document.getElementById("proposalHint")
       };
 
       const params = new URLSearchParams(window.location.search);
@@ -611,6 +1051,15 @@
         });
       }
 
+      function fmtMoney(n) {
+        if (n == null || Number.isNaN(Number(n))) return "—";
+        return "$" + Math.round(n).toLocaleString();
+      }
+
+      function clamp(n, lo, hi) {
+        return Math.min(hi, Math.max(lo, n));
+      }
+
       function pickEnergy(potential) {
         const configs = (potential && potential.solarPanelConfigs) || [];
         if (!configs.length) return null;
@@ -620,19 +1069,189 @@
         return best.yearlyEnergyDcKwh;
       }
 
+      function recommendedPanels(maxPanels) {
+        const max = Math.max(0, Number(maxPanels) || 0);
+        if (!max) return 0;
+        const raw = Math.round(max * RECOMMENDED_FRACTION);
+        return clamp(raw, Math.min(6, max), max);
+      }
+
+      function drawRoofPanels(maxPanels, recommended) {
+        const g = els.roofPanels;
+        g.innerHTML = "";
+        els.roofStage.classList.remove("animate");
+
+        const cols = 8;
+        const rows = 4;
+        const slots = cols * rows;
+        const showMax = clamp(Math.round((maxPanels / Math.max(maxPanels, 1)) * slots), 4, slots);
+        const showRec = clamp(Math.round((recommended / Math.max(maxPanels, 1)) * slots), 2, showMax);
+
+        const startX = 78;
+        const startY = 78;
+        const pw = 18;
+        const ph = 12;
+        const gap = 3;
+
+        for (let i = 0; i < showMax; i++) {
+          const r = Math.floor(i / cols);
+          const c = i % cols;
+          const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          rect.setAttribute("class", "panel-cell");
+          rect.setAttribute("x", String(startX + c * (pw + gap)));
+          rect.setAttribute("y", String(startY + r * (ph + gap)));
+          rect.setAttribute("width", String(pw));
+          rect.setAttribute("height", String(ph));
+          rect.setAttribute("rx", "1.5");
+          const isRec = i < showRec;
+          rect.setAttribute("fill", isRec ? "#0e7490" : "#155e75");
+          rect.setAttribute("opacity", isRec ? "0.95" : "0.35");
+          rect.style.animationDelay = (i * 0.03) + "s";
+          g.appendChild(rect);
+        }
+
+        els.roofCaption.textContent =
+          "Teal = demo recommended (~" + fmt(recommended) + " panels) · Faded = Google max packing (" + fmt(maxPanels) + ")";
+
+        requestAnimationFrame(function () {
+          els.roofStage.classList.add("animate");
+        });
+      }
+
+      function setGauges(energy, sunHours, areaM2) {
+        const e = Number(energy) || 0;
+        const s = Number(sunHours) || 0;
+        const a = Number(areaM2) || 0;
+
+        els.gEnergyLabel.textContent = e ? fmt(Math.round(e)) + " kWh/yr" : "—";
+        els.gSunLabel.textContent = s ? fmt(s) + " hrs" : "—";
+        els.gAreaLabel.textContent = a ? fmt(a, 1) + " m²" : "—";
+
+        // Reset then animate widths
+        els.gEnergyBar.style.width = "0%";
+        els.gSunBar.style.width = "0%";
+        els.gAreaBar.style.width = "0%";
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            els.gEnergyBar.style.width = clamp((e / 50000) * 100, 4, 100) + "%";
+            els.gSunBar.style.width = clamp((s / 2500) * 100, 4, 100) + "%";
+            els.gAreaBar.style.width = clamp((a / 200) * 100, 4, 100) + "%";
+          });
+        });
+      }
+
+      function buildTierModel(pot, energyMax) {
+        const maxPanels = Number(pot.maxArrayPanelsCount) || 0;
+        const googleWatts = Number(pot.panelCapacityWatts) || 400;
+        const rec = recommendedPanels(maxPanels);
+        const maxEnergy = Number(energyMax) || 0;
+
+        return TIER_DEFS.map(function (def) {
+          let panels = Math.round(rec * def.panelFactor);
+          panels = clamp(panels, 4, maxPanels || panels);
+          const kw = (panels * def.panelWatts) / 1000;
+          const wattRatio = def.panelWatts / googleWatts;
+          const panelRatio = maxPanels ? panels / maxPanels : 0;
+          const yearly = maxEnergy ? Math.round(maxEnergy * panelRatio * wattRatio) : 0;
+          const midPrice = kw * 1000 * def.dollarsPerWatt;
+          const lowPrice = midPrice * 0.92;
+          const highPrice = midPrice * 1.08;
+          const annualSavings = yearly * DEMO_KWH_RATE;
+          const payback = annualSavings > 0 ? midPrice / annualSavings : null;
+
+          return {
+            def: def,
+            panels: panels,
+            kw: kw,
+            yearly: yearly,
+            lowPrice: lowPrice,
+            highPrice: highPrice,
+            annualSavings: annualSavings,
+            payback: payback,
+            maxPanels: maxPanels,
+            recommended: rec
+          };
+        });
+      }
+
+      function renderProposals(pot, energyMax) {
+        lastPotential = { pot: pot, energyMax: energyMax };
+        const models = buildTierModel(pot, energyMax);
+        const rec = models[0] ? models[0].recommended : 0;
+        const maxP = models[0] ? models[0].maxPanels : 0;
+
+        els.proposalHint.textContent =
+          "Google max packing: " + fmt(maxP) + " panels · Demo recommended: " + fmt(rec) +
+          " panels. Select a tier — prices are illustrative demo numbers, not a real quote.";
+
+        els.tierGrid.innerHTML = "";
+        models.forEach(function (m) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "tier" + (m.def.className ? " " + m.def.className : "") +
+            (m.def.id === selectedTierId ? " selected" : "");
+          btn.setAttribute("role", "option");
+          btn.setAttribute("aria-selected", m.def.id === selectedTierId ? "true" : "false");
+          btn.dataset.tierId = m.def.id;
+
+          btn.innerHTML =
+            '<div class="tier-top">' +
+              '<h3 class="tier-name">' + m.def.name + '</h3>' +
+              '<span class="tier-price-tag">Demo · $' + m.def.dollarsPerWatt.toFixed(2) + '/W</span>' +
+            "</div>" +
+            '<p class="tier-blurb">' + m.def.blurb + "</p>" +
+            '<ul class="tier-stats">' +
+              "<li><span>Panels</span><strong>" + fmt(m.panels) + " × " + m.def.panelWatts + " W</strong></li>" +
+              "<li><span>System size</span><strong>" + fmt(m.kw, 1) + " kW</strong></li>" +
+              "<li><span>Yearly production</span><strong>~" + fmt(m.yearly) + " kWh</strong></li>" +
+              "<li><span>Installed (demo)</span><strong>" + fmtMoney(m.lowPrice) + "–" + fmtMoney(m.highPrice) + "</strong></li>" +
+              "<li><span>Est. bill savings</span><strong>~" + fmtMoney(m.annualSavings) + "/yr</strong></li>" +
+              "<li><span>Simple payback</span><strong>" +
+                (m.payback == null ? "—" : "~" + fmt(m.payback, 1) + " yrs") +
+              "</strong></li>" +
+              "<li><span>Finish</span><strong>" + m.def.finish + "</strong></li>" +
+            "</ul>" +
+            '<p class="tier-select-hint">Selected for this demo</p>';
+
+          btn.addEventListener("click", function () {
+            selectedTierId = m.def.id;
+            Array.prototype.forEach.call(els.tierGrid.querySelectorAll(".tier"), function (el) {
+              const on = el.dataset.tierId === selectedTierId;
+              el.classList.toggle("selected", on);
+              el.setAttribute("aria-selected", on ? "true" : "false");
+            });
+          });
+
+          els.tierGrid.appendChild(btn);
+        });
+
+        els.proposals.classList.add("show");
+      }
+
       function renderInsights(insights, meta) {
         const pot = insights.solarPotential || {};
         const energy = pickEnergy(pot);
+        const maxPanels = Number(pot.maxArrayPanelsCount) || 0;
+        const rec = recommendedPanels(maxPanels);
 
         els.modeBadge.textContent = meta.demo ? "Demo sample data" : "Live Google Solar";
         els.modeBadge.className = "badge" + (meta.demo ? "" : " live");
         els.resultTitle.textContent = meta.demo ? "Demo solar potential" : "Live solar potential";
         els.resultSubtitle.textContent = meta.addressLabel || "Matched building";
 
-        els.mPanels.textContent = fmt(pot.maxArrayPanelsCount);
+        els.mPanels.textContent = fmt(maxPanels);
         els.mEnergy.textContent = energy == null ? "—" : fmt(Math.round(energy));
         els.mSun.textContent = fmt(pot.maxSunshineHoursPerYear);
         els.mArea.textContent = fmt(pot.maxArrayAreaMeters2, 1);
+
+        els.panelNote.innerHTML =
+          "Google’s <strong>max panel count</strong> (" + fmt(maxPanels) +
+          ") is a theoretical packing for their model panel. Installers often propose fewer " +
+          "(e.g. ~" + fmt(rec) + " here) for setbacks, fire paths, and aesthetics. " +
+          "Demo proposals use that recommended count while still showing Google’s max.";
+
+        drawRoofPanels(maxPanels, rec);
+        setGauges(energy, pot.maxSunshineHoursPerYear, pot.maxArrayAreaMeters2);
 
         const parts = [];
         if (insights.postalCode) parts.push(insights.postalCode);
@@ -652,6 +1271,8 @@
         els.dNote.textContent = meta.demo
           ? "This is illustrative sample data shaped like a buildingInsights:findClosest response. No Google bill was charged."
           : "Values come from Google Solar via your Vercel /api/lookup (Google key stays on the server).";
+
+        renderProposals(pot, energy);
 
         els.results.classList.add("show");
         els.results.scrollIntoView({ behavior: "smooth", block: "start" });
