@@ -408,7 +408,7 @@
 
     <section class="panel" aria-labelledby="lookup-heading">
       <h2 id="lookup-heading">Look up a roof</h2>
-      <p class="hint">Paste a Google Maps API key with <strong>Geocoding API</strong> and <strong>Solar API</strong> enabled, or open with <code>?demo=1</code>. Never commit a key.</p>
+      <p class="hint">Live lookups go through Vercel (Google key stays on the server). Enter the shared <strong>app password</strong>, or use Demo mode / <code>?demo=1</code> with no password.</p>
 
       <div class="row two">
         <div class="field">
@@ -416,17 +416,17 @@
           <input id="address" type="text" placeholder="e.g. 1600 Amphitheatre Parkway, Mountain View, CA" autocomplete="street-address" />
         </div>
         <div class="field">
-          <label for="apiKey">Google Maps API key</label>
-          <input id="apiKey" type="password" placeholder="Paste once, then remember on this device" autocomplete="off" spellcheck="false" />
+          <label for="appPassword">App password</label>
+          <input id="appPassword" type="password" placeholder="Shared demo password (not your Google key)" autocomplete="current-password" spellcheck="false" />
           <div class="key-actions">
-            <button type="button" class="key-toggle" id="toggleKey">Show key</button>
+            <button type="button" class="key-toggle" id="toggleKey">Show password</button>
             <label class="remember">
               <input type="checkbox" id="rememberKey" />
               Remember on this device only
             </label>
-            <button type="button" class="key-toggle" id="clearKey" hidden>Forget saved key</button>
+            <button type="button" class="key-toggle" id="clearKey" hidden>Forget password</button>
           </div>
-          <p class="key-note" id="keyNote">Saved in your browser only — never in GitHub.</p>
+          <p class="key-note" id="keyNote">Google’s API key never leaves Vercel. This password only unlocks lookups.</p>
         </div>
       </div>
 
@@ -479,17 +479,13 @@
     </section>
 
     <footer>
-      SunTap Solar demo (OneTap) — single-file prototype. Live mode calls
-      <code>geocode/json</code> then <code>buildingInsights:findClosest</code>.
-      Pass <code>?demo=1</code> for sample data. Optionally remember your API key in this browser only (never commit a key).
+      SunTap Solar demo (OneTap) — live mode posts to <code>/api/lookup</code> on Vercel
+      (Google key in env vars). Pass <code>?demo=1</code> for sample data with no password.
     </footer>
   </div>
 
   <script>
     (function () {
-      const GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
-      const SOLAR_URL = "https://solar.googleapis.com/v1/buildingInsights:findClosest";
-
       const DEMO_ADDRESS = "1600 Amphitheatre Parkway, Mountain View, CA";
       const DEMO_INSIGHTS = {
         name: "buildings/demo-suntap-001",
@@ -517,11 +513,11 @@
         }
       };
 
-      const STORAGE_KEY = "suntap_api_key";
+      const STORAGE_KEY = "suntap_app_password";
 
       const els = {
         address: document.getElementById("address"),
-        apiKey: document.getElementById("apiKey"),
+        appPassword: document.getElementById("appPassword"),
         toggleKey: document.getElementById("toggleKey"),
         rememberKey: document.getElementById("rememberKey"),
         clearKey: document.getElementById("clearKey"),
@@ -546,26 +542,25 @@
       };
 
       const params = new URLSearchParams(window.location.search);
-      const urlKey = params.get("key");
       const forceDemo = params.get("demo") === "1" || params.get("demo") === "true";
 
       function updateKeyUi(saved) {
         els.rememberKey.checked = !!saved;
         els.clearKey.hidden = !saved;
         if (saved) {
-          els.keyNote.textContent = "Key saved on this device. You can just enter an address.";
+          els.keyNote.textContent = "Password saved on this device. You can just enter an address.";
           els.keyNote.classList.add("saved");
         } else {
-          els.keyNote.textContent = "Saved in your browser only — never in GitHub.";
+          els.keyNote.textContent = "Google’s API key never leaves Vercel. This password only unlocks lookups.";
           els.keyNote.classList.remove("saved");
         }
       }
 
-      function loadSavedKey() {
+      function loadSavedPassword() {
         try {
           const saved = localStorage.getItem(STORAGE_KEY);
           if (saved) {
-            els.apiKey.value = saved;
+            els.appPassword.value = saved;
             updateKeyUi(true);
             return true;
           }
@@ -574,41 +569,30 @@
         return false;
       }
 
-      function persistKeyIfRequested() {
-        const key = (els.apiKey.value || "").trim();
+      function persistPasswordIfRequested() {
+        const password = els.appPassword.value || "";
         try {
-          if (els.rememberKey.checked && key) {
-            localStorage.setItem(STORAGE_KEY, key);
+          if (els.rememberKey.checked && password) {
+            localStorage.setItem(STORAGE_KEY, password);
             updateKeyUi(true);
           } else if (!els.rememberKey.checked) {
             localStorage.removeItem(STORAGE_KEY);
             updateKeyUi(false);
           }
         } catch (_) {
-          setStatus("warn", "Could not save the key in this browser (storage blocked).");
+          setStatus("warn", "Could not save the password in this browser (storage blocked).");
         }
       }
 
-      function forgetKey() {
+      function forgetPassword() {
         try { localStorage.removeItem(STORAGE_KEY); } catch (_) { /* ignore */ }
-        els.apiKey.value = "";
+        els.appPassword.value = "";
         els.rememberKey.checked = false;
         updateKeyUi(false);
-        setStatus("ok", "Saved key forgotten on this device.");
+        setStatus("ok", "Saved password forgotten on this device.");
       }
 
-      if (urlKey) {
-        els.apiKey.value = urlKey;
-        // Strip key from visible URL without reloading (keeps history cleaner)
-        try {
-          params.delete("key");
-          const clean = params.toString();
-          const next = clean ? `${location.pathname}?${clean}${location.hash}` : `${location.pathname}${location.hash}`;
-          history.replaceState(null, "", next);
-        } catch (_) { /* ignore */ }
-      } else {
-        loadSavedKey();
-      }
+      loadSavedPassword();
 
       function setStatus(kind, message) {
         els.status.className = "status show " + kind;
@@ -667,70 +651,49 @@
           : "—";
         els.dNote.textContent = meta.demo
           ? "This is illustrative sample data shaped like a buildingInsights:findClosest response. No Google bill was charged."
-          : "Values come from Google Solar API buildingInsights:findClosest for the nearest building (~50 m).";
+          : "Values come from Google Solar via your Vercel /api/lookup (Google key stays on the server).";
 
         els.results.classList.add("show");
         els.results.scrollIntoView({ behavior: "smooth", block: "start" });
       }
 
-      async function geocodeAddress(address, key) {
-        const url = `${GEOCODE_URL}?address=${encodeURIComponent(address)}&key=${encodeURIComponent(key)}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.status !== "OK" || !data.results || !data.results.length) {
-          const msg = data.error_message || data.status || "Geocoding failed";
-          throw new Error("Geocoding: " + msg);
-        }
-        const best = data.results[0];
-        return {
-          lat: best.geometry.location.lat,
-          lng: best.geometry.location.lng,
-          formatted: best.formatted_address
-        };
-      }
-
-      async function fetchSolar(lat, lng, key) {
-        const url =
-          `${SOLAR_URL}?location.latitude=${encodeURIComponent(lat)}` +
-          `&location.longitude=${encodeURIComponent(lng)}` +
-          `&requiredQuality=HIGH` +
-          `&key=${encodeURIComponent(key)}`;
-        const res = await fetch(url);
-        const data = await res.json().catch(function () { return {}; });
-        if (!res.ok) {
-          const msg = (data.error && data.error.message) || res.statusText || "Solar request failed";
-          throw new Error("Solar API: " + msg);
-        }
-        return data;
-      }
-
       async function runLive() {
         const address = (els.address.value || "").trim();
-        const key = (els.apiKey.value || "").trim();
+        const password = els.appPassword.value || "";
         if (!address) {
           setStatus("warn", "Enter a street address first.");
           els.address.focus();
           return;
         }
-        if (!key) {
-          setStatus("warn", "Paste an API key (or enable Remember after pasting), or use Demo mode.");
-          els.apiKey.focus();
+        if (!password) {
+          setStatus("warn", "Enter the app password, or use Demo mode.");
+          els.appPassword.focus();
           return;
         }
 
-        persistKeyIfRequested();
+        persistPasswordIfRequested();
 
         els.lookupBtn.disabled = true;
-        setStatus("info", "Geocoding address…");
+        setStatus("info", "Looking up solar potential…");
         try {
-          const place = await geocodeAddress(address, key);
-          setStatus("info", "Fetching solar building insights…");
-          const insights = await fetchSolar(place.lat, place.lng, key);
+          const res = await fetch("/api/lookup", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ address: address, password: password })
+          });
+          const data = await res.json().catch(function () { return {}; });
+          if (!res.ok) {
+            throw new Error(data.error || res.statusText || "Lookup failed");
+          }
           clearStatus();
           setStatus("ok", "Live lookup complete.");
-          renderInsights(insights, { demo: false, addressLabel: place.formatted });
+          renderInsights(data.insights, { demo: false, addressLabel: data.addressLabel });
         } catch (err) {
-          setStatus("err", err.message || String(err));
+          var msg = err.message || String(err);
+          if (msg === "Failed to fetch" || /NetworkError/i.test(msg)) {
+            msg = "Could not reach /api/lookup. Open the Vercel URL (not a local file), and confirm env vars are set.";
+          }
+          setStatus("err", msg);
         } finally {
           els.lookupBtn.disabled = false;
         }
@@ -752,29 +715,32 @@
       els.address.addEventListener("keydown", function (e) {
         if (e.key === "Enter") runLive();
       });
+      els.appPassword.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") runLive();
+      });
 
       els.toggleKey.addEventListener("click", function () {
-        const showing = els.apiKey.type === "text";
-        els.apiKey.type = showing ? "password" : "text";
-        els.toggleKey.textContent = showing ? "Show key" : "Hide key";
+        const showing = els.appPassword.type === "text";
+        els.appPassword.type = showing ? "password" : "text";
+        els.toggleKey.textContent = showing ? "Show password" : "Hide password";
       });
 
       els.rememberKey.addEventListener("change", function () {
         if (els.rememberKey.checked) {
-          persistKeyIfRequested();
-          if (!(els.apiKey.value || "").trim()) {
-            setStatus("warn", "Paste your API key first, then check Remember.");
+          if (!(els.appPassword.value || "")) {
+            setStatus("warn", "Enter the app password first, then check Remember.");
             els.rememberKey.checked = false;
             updateKeyUi(false);
           } else {
-            setStatus("ok", "Key will stay on this device. Next time, just enter an address.");
+            persistPasswordIfRequested();
+            setStatus("ok", "Password will stay on this device. Next time, just enter an address.");
           }
         } else {
-          forgetKey();
+          forgetPassword();
         }
       });
 
-      els.clearKey.addEventListener("click", forgetKey);
+      els.clearKey.addEventListener("click", forgetPassword);
 
       if (forceDemo) {
         runDemo();
