@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>OneTap — Digital Card</title>
+  <meta name="description" content="OneTap digital business card. Choose a trade to open the right tool." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="card.css" />
+</head>
+<body>
+  <div class="wrap">
+    <header class="card-hero">
+      <h1 class="brand">One<span>Tap</span></h1>
+      <p class="person">Kevin Houng</p>
+      <p class="tagline">Your digital card — pick a trade and open the right tool in one tap.</p>
+    </header>
+
+    <section class="section" aria-labelledby="trades-heading">
+      <h2 id="trades-heading">How can we help?</h2>
+      <p class="hint">NFC opens this page. From here, choose the trade that matches the conversation.</p>
+      <ul class="trades">
+        <li>
+          <a class="trade live" href="index.html">
+            <span class="trade-copy">
+              <strong>Solar</strong>
+              <span>Roof potential, demo estimates, proposal tiers</span>
+            </span>
+            <span class="trade-go">Open SunTap →</span>
+          </a>
+        </li>
+        <li>
+          <a class="trade" href="trades/electrician.html">
+            <span class="trade-copy">
+              <strong>Electrician</strong>
+              <span>Coming soon — service intake placeholder</span>
+            </span>
+            <span class="trade-go">View →</span>
+          </a>
+        </li>
+        <li>
+          <a class="trade" href="trades/plumbing.html">
+            <span class="trade-copy">
+              <strong>Plumbing</strong>
+              <span>Coming soon — service intake placeholder</span>
+            </span>
+            <span class="trade-go">View →</span>
+          </a>
+        </li>
+        <li>
+          <a class="trade" href="trades/construction.html">
+            <span class="trade-copy">
+              <strong>Construction</strong>
+              <span>Coming soon — project intake placeholder</span>
+            </span>
+            <span class="trade-go">View →</span>
+          </a>
+        </li>
+        <li>
+          <a class="trade" href="trades/handyman.html">
+            <span class="trade-copy">
+              <strong>Handyman</strong>
+              <span>Coming soon — job request placeholder</span>
+            </span>
+            <span class="trade-go">View →</span>
+          </a>
+        </li>
+      </ul>
+    </section>
+
+    <footer class="note">
+      Point your physical OneTap / NFC card URL to this page (e.g. <code>/card.html</code> on your Vercel deploy).
+      The phone only opens a link — routing lives in this web UX.
+    </footer>
+  </div>
+</body>
+</html>

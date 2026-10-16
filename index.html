@@ -713,10 +713,22 @@
       color: var(--ok);
       font-weight: 600;
     }
+
+    .back-card {
+      display: inline-flex;
+      margin: 0 0 0.75rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--sky-deep);
+      text-decoration: none;
+    }
+
+    .back-card:hover { text-decoration: underline; text-underline-offset: 3px; }
   </style>
 </head>
 <body>
   <div class="wrap">
+    <a class="back-card" href="card.html">← Back to card</a>
     <header class="hero">
       <h1 class="brand">Sun<span>Tap</span></h1>
       <p class="tagline">One tap to see a roof’s solar potential — Google Geocoding + Solar, or instant demo data.</p>
