@@ -347,7 +347,6 @@
     }
 
     .key-toggle {
-      margin-top: 0.4rem;
       font-size: 0.85rem;
       color: var(--sky-deep);
       background: none;
@@ -357,6 +356,43 @@
       font-weight: 600;
       text-decoration: underline;
       text-underline-offset: 2px;
+    }
+
+    .key-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem 1rem;
+      margin-top: 0.45rem;
+    }
+
+    .remember {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin: 0;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--ink-soft);
+      cursor: pointer;
+    }
+
+    .remember input {
+      width: auto;
+      accent-color: var(--sky);
+    }
+
+    .key-note {
+      margin: 0.45rem 0 0;
+      font-size: 0.8rem;
+      color: var(--ink-soft);
+    }
+
+    .key-note.saved {
+      color: var(--ok);
+      font-weight: 600;
     }
   </style>
 </head>
@@ -381,8 +417,16 @@
         </div>
         <div class="field">
           <label for="apiKey">Google Maps API key</label>
-          <input id="apiKey" type="password" placeholder="Paste key (stored only in this browser session)" autocomplete="off" spellcheck="false" />
-          <button type="button" class="key-toggle" id="toggleKey">Show key</button>
+          <input id="apiKey" type="password" placeholder="Paste once, then remember on this device" autocomplete="off" spellcheck="false" />
+          <div class="key-actions">
+            <button type="button" class="key-toggle" id="toggleKey">Show key</button>
+            <label class="remember">
+              <input type="checkbox" id="rememberKey" />
+              Remember on this device only
+            </label>
+            <button type="button" class="key-toggle" id="clearKey" hidden>Forget saved key</button>
+          </div>
+          <p class="key-note" id="keyNote">Saved in your browser only — never in GitHub.</p>
         </div>
       </div>
 
@@ -437,7 +481,7 @@
     <footer>
       SunTap Solar demo (OneTap) — single-file prototype. Live mode calls
       <code>geocode/json</code> then <code>buildingInsights:findClosest</code>.
-      Pass <code>?key=</code> or <code>?demo=1</code> in the URL. Keys stay in memory only for this page session.
+      Pass <code>?demo=1</code> for sample data. Optionally remember your API key in this browser only (never commit a key).
     </footer>
   </div>
 
@@ -473,10 +517,15 @@
         }
       };
 
+      const STORAGE_KEY = "suntap_api_key";
+
       const els = {
         address: document.getElementById("address"),
         apiKey: document.getElementById("apiKey"),
         toggleKey: document.getElementById("toggleKey"),
+        rememberKey: document.getElementById("rememberKey"),
+        clearKey: document.getElementById("clearKey"),
+        keyNote: document.getElementById("keyNote"),
         lookupBtn: document.getElementById("lookupBtn"),
         demoBtn: document.getElementById("demoBtn"),
         heroDemoBtn: document.getElementById("heroDemoBtn"),
@@ -500,6 +549,54 @@
       const urlKey = params.get("key");
       const forceDemo = params.get("demo") === "1" || params.get("demo") === "true";
 
+      function updateKeyUi(saved) {
+        els.rememberKey.checked = !!saved;
+        els.clearKey.hidden = !saved;
+        if (saved) {
+          els.keyNote.textContent = "Key saved on this device. You can just enter an address.";
+          els.keyNote.classList.add("saved");
+        } else {
+          els.keyNote.textContent = "Saved in your browser only — never in GitHub.";
+          els.keyNote.classList.remove("saved");
+        }
+      }
+
+      function loadSavedKey() {
+        try {
+          const saved = localStorage.getItem(STORAGE_KEY);
+          if (saved) {
+            els.apiKey.value = saved;
+            updateKeyUi(true);
+            return true;
+          }
+        } catch (_) { /* private mode / blocked storage */ }
+        updateKeyUi(false);
+        return false;
+      }
+
+      function persistKeyIfRequested() {
+        const key = (els.apiKey.value || "").trim();
+        try {
+          if (els.rememberKey.checked && key) {
+            localStorage.setItem(STORAGE_KEY, key);
+            updateKeyUi(true);
+          } else if (!els.rememberKey.checked) {
+            localStorage.removeItem(STORAGE_KEY);
+            updateKeyUi(false);
+          }
+        } catch (_) {
+          setStatus("warn", "Could not save the key in this browser (storage blocked).");
+        }
+      }
+
+      function forgetKey() {
+        try { localStorage.removeItem(STORAGE_KEY); } catch (_) { /* ignore */ }
+        els.apiKey.value = "";
+        els.rememberKey.checked = false;
+        updateKeyUi(false);
+        setStatus("ok", "Saved key forgotten on this device.");
+      }
+
       if (urlKey) {
         els.apiKey.value = urlKey;
         // Strip key from visible URL without reloading (keeps history cleaner)
@@ -509,6 +606,8 @@
           const next = clean ? `${location.pathname}?${clean}${location.hash}` : `${location.pathname}${location.hash}`;
           history.replaceState(null, "", next);
         } catch (_) { /* ignore */ }
+      } else {
+        loadSavedKey();
       }
 
       function setStatus(kind, message) {
@@ -614,10 +713,12 @@
           return;
         }
         if (!key) {
-          setStatus("warn", "Paste an API key, or use Demo mode / ?demo=1 (no key needed).");
+          setStatus("warn", "Paste an API key (or enable Remember after pasting), or use Demo mode.");
           els.apiKey.focus();
           return;
         }
+
+        persistKeyIfRequested();
 
         els.lookupBtn.disabled = true;
         setStatus("info", "Geocoding address…");
@@ -657,6 +758,23 @@
         els.apiKey.type = showing ? "password" : "text";
         els.toggleKey.textContent = showing ? "Show key" : "Hide key";
       });
+
+      els.rememberKey.addEventListener("change", function () {
+        if (els.rememberKey.checked) {
+          persistKeyIfRequested();
+          if (!(els.apiKey.value || "").trim()) {
+            setStatus("warn", "Paste your API key first, then check Remember.");
+            els.rememberKey.checked = false;
+            updateKeyUi(false);
+          } else {
+            setStatus("ok", "Key will stay on this device. Next time, just enter an address.");
+          }
+        } else {
+          forgetKey();
+        }
+      });
+
+      els.clearKey.addEventListener("click", forgetKey);
 
       if (forceDemo) {
         runDemo();
